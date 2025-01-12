@@ -102,6 +102,7 @@ class FrameBuffer {
         m_ptr++;
     }
 
+    // no bounds checking
     uint8_t* get_space(std::size_t sz) {
         uint8_t* out = &m_buf[m_ptr];
         m_ptr += sz;
