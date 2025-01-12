@@ -1,6 +1,6 @@
 # websocket-frame-utility
 
-Single-header C++ library for fast parsing and constructing of Websocket frames.
+Single-header C++17 library for fast parsing and constructing of Websocket frames.
 
 **Disclaimer: this readme is largely AI generated, so mistakes may exist**.
 
