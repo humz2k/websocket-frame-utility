@@ -422,6 +422,7 @@ class FrameParser {
         }
         const char* buf = (const char*)(m_frame_buffer.head() + m_ptr);
         m_frame.payload = std::string_view(buf, m_payload_len);
+        m_ptr += m_payload_len;
         m_parse_stage = ParseStage::DONE;
     }
 
