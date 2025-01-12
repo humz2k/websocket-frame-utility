@@ -299,7 +299,7 @@ class FrameFactory {
     std::string_view pong(bool mask, std::string_view payload) {
         if (payload.size() > 125) {
             throw std::runtime_error(
-                "Payload should be <= 125 for ping frames");
+                "Payload should be <= 125 for pong frames");
         }
         return construct(true, Frame::Opcode::PONG, mask, payload);
     }
@@ -307,7 +307,7 @@ class FrameFactory {
     std::string_view close(bool mask, std::string_view payload) {
         if (payload.size() > 125) {
             throw std::runtime_error(
-                "Payload should be <= 125 for ping frames");
+                "Payload should be <= 125 for close frames");
         }
         return construct(true, Frame::Opcode::CLOSE, mask, payload);
     }
