@@ -174,6 +174,21 @@ struct Frame {
     std::array<std::uint8_t, 4> masking_key;
     std::string_view payload;
 
+    friend std::ostream& operator<<(std::ostream& stream, const Frame& frame) {
+        stream << "[fin=" << frame.fin << "]["
+               << Frame::opcode_to_string(frame.opcode)
+               << "][mask=" << frame.mask << "]";
+        if (frame.mask) {
+            stream << "[key=" << std::hex << frame.masking_key[0] << " "
+                   << frame.masking_key[1] << " " << frame.masking_key[2] << " "
+                   << frame.masking_key[3] << std::dec << "]";
+        }
+        if (frame.payload.size() > 0) {
+            stream << "[payload=\"" << frame.payload << "\"]";
+        }
+        return stream;
+    }
+
   protected:
     void construct(FrameBuffer& buf) const {
         buf.reset();
