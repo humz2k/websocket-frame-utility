@@ -5,6 +5,7 @@
 #include <array>
 #include <cstdint>
 #include <cstring>
+#include <iostream>
 #include <optional>
 #include <random>
 #include <stdexcept>
@@ -96,6 +97,8 @@ class FrameBuffer {
         }
     }
 
+    void ensure_extra_space(std::size_t extra) { ensure_fit(m_ptr + extra); }
+
     // no bounds checking
     void push_back(uint8_t byte) {
         m_buf[m_ptr] = byte;
@@ -103,14 +106,16 @@ class FrameBuffer {
     }
 
     // no bounds checking
-    uint8_t* get_space(std::size_t sz) {
-        uint8_t* out = &m_buf[m_ptr];
+    std::uint8_t* get_space(std::size_t sz) {
+        std::uint8_t* out = &m_buf[m_ptr];
         m_ptr += sz;
         return out;
     }
 
+    void claim_space(std::size_t sz) { m_ptr += sz; }
+
     void push_back(const View& view) {
-        ensure_fit(m_ptr + view.size());
+        ensure_extra_space(view.size());
         std::memcpy(get_space(view.size()), view.buf(),
                     view.size() * sizeof(std::uint8_t));
     }
@@ -121,7 +126,11 @@ class FrameBuffer {
                     view.size() * sizeof(char));
     }
 
+    std::uint8_t* head() { return m_buf.data(); }
     const std::uint8_t* head() const { return m_buf.data(); }
+
+    std::uint8_t* tail() { return &m_buf[m_ptr]; }
+    const std::uint8_t* tail() const { return &m_buf[m_ptr]; }
 
     std::size_t size() const { return m_ptr; }
 
@@ -508,6 +517,18 @@ class FrameParser {
             return {};
         return parse();
     }
+
+    std::optional<Frame> update(bool new_data) {
+        if (done())
+            reset();
+        if ((!new_data) && (m_parse_stage != ParseStage::FIN_BIT))
+            return {};
+        if (remaining() == 0)
+            return {};
+        return parse();
+    }
+
+    wsframe::FrameBuffer& frame_buffer() { return m_frame_buffer; }
 };
 
 } // namespace wsframe
