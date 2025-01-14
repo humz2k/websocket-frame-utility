@@ -468,10 +468,10 @@ class FrameParser {
 
     void reset() {
         if (remaining() > 0) {
-            auto previous =
-                FrameBuffer::View(m_frame_buffer.head() + m_ptr, remaining());
+            auto re_space = remaining();
+            std::memmove(m_frame_buffer.head(),m_frame_buffer.head() + m_ptr,re_space);
             m_frame_buffer.reset();
-            m_frame_buffer.push_back(previous);
+            m_frame_buffer.claim_space(re_space);
             m_ptr = 0;
         } else {
             m_frame_buffer.reset();
