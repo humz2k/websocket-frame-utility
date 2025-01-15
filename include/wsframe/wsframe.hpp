@@ -120,7 +120,7 @@ class FrameBuffer {
                     view.size() * sizeof(std::uint8_t));
     }
 
-    void push_back(const std::string_view& view) {
+    void push_back(std::string_view view) {
         ensure_fit(m_ptr + view.size());
         std::memcpy(get_space(view.size()), view.data(),
                     view.size() * sizeof(char));
@@ -469,7 +469,8 @@ class FrameParser {
     void reset() {
         if (remaining() > 0) {
             auto re_space = remaining();
-            std::memmove(m_frame_buffer.head(),m_frame_buffer.head() + m_ptr,re_space);
+            std::memmove(m_frame_buffer.head(), m_frame_buffer.head() + m_ptr,
+                         re_space);
             m_frame_buffer.reset();
             m_frame_buffer.claim_space(re_space);
             m_ptr = 0;
@@ -506,7 +507,7 @@ class FrameParser {
         return parse();
     }
 
-    std::optional<Frame> update(const std::string_view& view) {
+    std::optional<Frame> update(std::string_view view) {
         if (done())
             reset();
         if (view.size() != 0)
